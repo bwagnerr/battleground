@@ -21,96 +21,60 @@ class Game extends Sprite {
 
 	private var window_width:Int;
 	private var window_height:Int;
-	private var character:Character;
+	private var player1:Character;
+	private var player2:Character;
 	private var keyPressed:Bool = false;
 
 	public function new () {
 		super ();
 		initialSetup();
-		prepareCharacter();
+		prepareCharacters();
 	}
 
 	private function initialSetup():Void{
 		window_width = Lib.initWidth;
 		window_height = Lib.initHeight;
-		drawBackground();
+		Lib.current.stage.addEventListener(Event.ENTER_FRAME, gameLoop);
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN,monitorKeyboard);
+	}
+
+	private function gameLoop(event:Event):Void{
+		draw();
+	}
+
+	private function draw(){
+		graphics.clear();
+		drawBackground();
+		graphics.drawTiles(player1.draw(), player1.currentPosition());
+		graphics.drawTiles(player2.draw(), player2.currentPosition());
+	}
+
+	private function update(){
+
 	}
 
 	private function drawBackground():Void{
 		var background:Background = new Background(null, window_width, window_height);
-		graphics.drawTiles(background, background.getTilePositions(), true, Tilesheet.TILE_ALPHA);
+		graphics.drawTiles(background, background.getTilePositions(), true);
 	}
 
-	private function prepareCharacter():Void{
-		character = new Character('human');
-		graphics.drawTiles(character.draw(), character.spawn());
-		graphics.drawTiles(character.draw(), [0,0,9]);
-
+	private function prepareCharacters():Void{
+		player1 = new Character('human');
+		player2 = new Character(128,128,'skeleton');
 	}
 
 	private function monitorKeyboard(event:KeyboardEvent):Void{
-		keyPressed = false;
-		if(keyPressed)
-			return;
+		trace(event.keyCode);
 		switch(event.keyCode){
-			case 38: drawWalk(Position.up);
-			case 40: drawWalk(Position.down);
-			case 37: drawWalk(Position.left);
-			case 39: drawWalk(Position.right);
+			case 38: player1.walkUp();
+			case 40: player1.walkDown();
+			case 37: player1.walkLeft();
+			case 39: player1.walkRight();
+			case 87: player2.walkUp();
+			case 83: player2.walkDown();
+			case 65: player2.walkLeft();
+			case 68: player2.walkRight();
 		}
-	}
-
-	private function drawWalk(position:Position):Void{
-		keyPressed = true;
-		var finalPosition:Array<Float> = character.walk(position);
-		var draw:CharacterDraw = character.draw();
-		graphics.clear();
-		drawBackground();
-		if(position == Position.left){
-			graphics.drawTiles(draw, [finalPosition[0]+64, finalPosition[1], draw.index_by_facing(Position.walking_left1)]);
-			while(Std.random(10000000) % 10000000 != 0) {};
-			trace('got past here');
-			array.push
-			graphics.drawTiles(draw, [finalPosition[0]+56, finalPosition[1], draw.index_by_facing(Position.walking_left2)]);
-			graphics.drawTiles(draw, [finalPosition[0]+48, finalPosition[1], draw.index_by_facing(Position.walking_left3)]);
-			graphics.drawTiles(draw, [finalPosition[0]+40, finalPosition[1], draw.index_by_facing(Position.walking_left4)]);
-			graphics.drawTiles(draw, [finalPosition[0]+32, finalPosition[1], draw.index_by_facing(Position.walking_left5)]);
-			graphics.drawTiles(draw, [finalPosition[0]+24, finalPosition[1], draw.index_by_facing(Position.walking_left6)]);
-			graphics.drawTiles(draw, [finalPosition[0]+16, finalPosition[1], draw.index_by_facing(Position.walking_left7)]);
-			graphics.drawTiles(draw, [finalPosition[0]+8, finalPosition[1], draw.index_by_facing(Position.walking_left8)]);
-		}else if(position == Position.right){
-			graphics.drawTiles(draw, [finalPosition[0]-56, finalPosition[1], draw.index_by_facing(Position.walking_right1)]);
-			graphics.drawTiles(draw, [finalPosition[0]-48, finalPosition[1], draw.index_by_facing(Position.walking_right2)]);
-			graphics.drawTiles(draw, [finalPosition[0]-40, finalPosition[1], draw.index_by_facing(Position.walking_right3)]);
-			graphics.drawTiles(draw, [finalPosition[0]-32, finalPosition[1], draw.index_by_facing(Position.walking_right4)]);
-			graphics.drawTiles(draw, [finalPosition[0]-24, finalPosition[1], draw.index_by_facing(Position.walking_right5)]);
-			graphics.drawTiles(draw, [finalPosition[0]-16, finalPosition[1], draw.index_by_facing(Position.walking_right6)]);
-			graphics.drawTiles(draw, [finalPosition[0]-8, finalPosition[1], draw.index_by_facing(Position.walking_right7)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1], draw.index_by_facing(Position.walking_right8)]);
-		}else if(position == Position.up){
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] + 56, draw.index_by_facing(Position.walking_up1)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] + 48, draw.index_by_facing(Position.walking_up2)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] + 40, draw.index_by_facing(Position.walking_up3)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] + 32, draw.index_by_facing(Position.walking_up4)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] + 24, draw.index_by_facing(Position.walking_up5)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] + 16, draw.index_by_facing(Position.walking_up6)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] + 8,  draw.index_by_facing(Position.walking_up7)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1],      draw.index_by_facing(Position.walking_up8)]);
-		}else if(position == Position.down){
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] - 56, draw.index_by_facing(Position.walking_down1)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] - 48, draw.index_by_facing(Position.walking_down2)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] - 40, draw.index_by_facing(Position.walking_down3)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] - 32, draw.index_by_facing(Position.walking_down4)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] - 24, draw.index_by_facing(Position.walking_down5)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] - 16, draw.index_by_facing(Position.walking_down6)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1] - 8, draw.index_by_facing(Position.walking_down7)]);
-			graphics.drawTiles(draw, [finalPosition[0], finalPosition[1],  draw.index_by_facing(Position.walking_down8)]);
-		}
-		graphics.clear();
-		drawBackground();
-		graphics.drawTiles(character.draw(), finalPosition);
-		keyPressed = false;
 	}
 
 	public static function main () {

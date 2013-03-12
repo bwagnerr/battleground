@@ -27,7 +27,6 @@ class Background extends Tilesheet{
 				tilePositions.push(x);
 				tilePositions.push(y);
 				tilePositions.push(0);
-				tilePositions.push(0.2);
 			}
 		}
 	}
