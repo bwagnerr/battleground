@@ -1,23 +1,14 @@
 package;
 
-import com.eclecticdesignstudio.motion.Actuate;
 import nme.display.Sprite;
-import nme.display.StageAlign;
-import nme.display.StageScaleMode;
 import nme.display.Tilesheet;
 import nme.Assets;
-import nme.display.BitmapData;
 import nme.events.Event;
 import nme.events.KeyboardEvent;
-import nme.events.TimerEvent;
-import nme.utils.Timer;
-import nme.geom.Rectangle;
-import nme.geom.Point;
 import nme.text.TextField;
 import nme.text.TextFormat;
 import nme.text.TextFormatAlign;
 import nme.Lib;
-import neko.Sys;
 
 class Game extends Sprite {
 

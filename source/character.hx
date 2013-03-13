@@ -69,7 +69,6 @@ class Character extends Sprite{
 	}
 
 	private function prepareNPC(){
-		trace('preparing NPC of race '+race);
 		var timer:Timer = new Timer(1000);
 		timer.run = moveRandomly;
 	}
