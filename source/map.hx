@@ -23,7 +23,7 @@ class Map extends Sprite{
 
 		attachEvents();
 
-		npcs = new FastList();
+		npcs = new FastList<Character>();
 
 		gridSize = 64;
 		gridRows = Math.floor(Lib.initWidth / gridSize);
