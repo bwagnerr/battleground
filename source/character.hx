@@ -1,59 +1,77 @@
 package;
 
 import nme.Lib;
+import nme.display.Sprite;
+import nme.events.Event;
+import nme.events.TimerEvent;
+import haxe.Timer;
 
-class Character{
-	private var currentX:Float;
-	private var currentY:Float;
-	private var limitX:Float;
-	private var limitY:Float;
+class Character extends Sprite{
+	private var tile:Tile;
 	private var character:CharacterDraw;
 	private var race:String;
+	private var isNPC:Bool;
 
-	public function new(x = 0,y = 0, race = 'human'){
-		currentX = x;
-		currentY = y;
-		limitX = Lib.initWidth;
-		limitY = Lib.initHeight;
+	public function new(tile:Tile, race = 'human', npc = true){
+		super();
+		this.race = race;
 
+		isNPC = npc;
+		if(isNPC) prepareNPC();
+			
 		character = new CharacterDraw(race);
 	}
 
-	public function draw():CharacterDraw{
-		return character;
+	public function move(new_tile:Tile){
+		if(new_tile != null && new_tile.isEmpty()){
+			tile = new_tile;
+			tile.addChild(this);
+		}
+	}
+
+	public function draw(){
+		graphics.clear();
+		character.drawTiles(graphics, character.position(tile.bound_x(), tile.bound_y()));
 	}
 
 	public function walkDown(){
-		if(currentY + character.characterSize()*2 < limitY){
-			currentY += character.characterSize();
-		}
+		move(tile.bottomTile());
 		character.changeFacing(Position.down);
 	}
 
 	public function walkUp(){
-		if(currentY - character.characterSize() >= 0){
-			currentY -= character.characterSize();
-		}
+		move(tile.topTile());
 		character.changeFacing(Position.up);
 	}
 
 	public function walkLeft(){
-		if(currentX - character.characterSize() >= 0){
-			currentX -= character.characterSize();
-		}
+		move(tile.leftTile());
 		character.changeFacing(Position.left);
 	}
 
 	public function walkRight(){
-		if(currentX + character.characterSize() < limitX){
-			currentX += character.characterSize();
-		}
+		move(tile.rightTile());
 		character.changeFacing(Position.right);
 	}
 
-	public function currentPosition(){
-		return character.position(currentX,currentY);
+	public function characterSprite(){
+		return character;
 	}
 
+	public function moveRandomly():Void{
+		var random:Int = Std.random(4);
+		switch(random){
+			case 0: walkUp();
+			case 1: walkLeft();
+			case 2: walkDown();
+			case 3: walkRight();
+		}
+	}
+
+	private function prepareNPC(){
+		trace('preparing NPC of race '+race);
+		var timer:Timer = new Timer(1000);
+		timer.run = moveRandomly;
+	}
 
 }
