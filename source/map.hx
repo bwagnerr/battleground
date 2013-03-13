@@ -3,9 +3,6 @@ package;
 import nme.display.Sprite;
 import nme.geom.Point;
 import nme.Lib;
-import nme.events.Event;
-import nme.events.KeyboardEvent;
-import haxe.FastList;
 
 class Map extends Sprite{
 
@@ -15,15 +12,12 @@ class Map extends Sprite{
 	private var gridRows:Int;
 	private var ground:Ground;
 	private var gridSize:Int;
-	private var player:Character;
-	private var npcs:FastList<Character>;
+	
 
 	public function new(stageWidth:Int, stageHeight:Int){
 		super();
 
-		attachEvents();
 
-		npcs = new FastList<Character>();
 
 		gridSize = 64;
 		gridRows = Math.floor(Lib.initWidth / gridSize);
@@ -36,25 +30,8 @@ class Map extends Sprite{
 	public function draw(){
 		graphics.clear();
 		drawTerrain();
-
-		for(npc in npcs){
-			npc.draw();
-		}
-		player.draw();
 	}
-
-	public function addPlayer(new_player:Character){
-		player = new_player;
-		var new_position:Tile = mapGridRandom();
-		player.move(new_position);
-	}
-
-	public function addNPC(npc:Character){
-		var new_position:Tile = mapGridRandom();
-		npc.move(new_position);
-		npcs.add(npc);
-	}
-
+	
 	public function mapGridRandom():Tile{
 		var tile:Tile = null;
 		while(tile == null){
@@ -66,7 +43,7 @@ class Map extends Sprite{
 	}
 
 	public function drawTerrain(){
-		ground.drawTiles(graphics, tilePositions);
+		graphics.drawTiles(ground,tilePositions);
 	}
 
 	private function generateTerrainData(){
@@ -84,6 +61,7 @@ class Map extends Sprite{
 				tilePositions.push(Ground.grass);
 			}
 		}
+		draw();
 	}
 
 	private function generateGrid(){
@@ -124,21 +102,6 @@ class Map extends Sprite{
 		}
 	}
 
-	private function attachEvents(){
-		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN,monitorKeyboard);
-	}
 
-	private function monitorKeyboard(event:KeyboardEvent):Void{
-		switch(event.keyCode){
-			case 38: player.walkUp();
-			case 40: player.walkDown();
-			case 37: player.walkLeft();
-			case 39: player.walkRight();
-			case 87: player.walkUp();
-			case 83: player.walkDown();
-			case 65: player.walkLeft();
-			case 68: player.walkRight();
-		}
-	}
 
 }
