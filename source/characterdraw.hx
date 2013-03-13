@@ -31,7 +31,7 @@ class CharacterDraw extends Tilesheet{
   }
 
   public function changeFacing(direction:Position){
-    resetIndex(direction);
+    if(facing != direction) resetIndex(direction);
     facing = direction;
   }
 
